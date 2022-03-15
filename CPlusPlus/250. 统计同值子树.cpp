@@ -1,3 +1,6 @@
+/*
+一定不要忘记判断空树，空链表等等
+*/
 class Solution {
 public:
     int countUnivalSubtrees(TreeNode* root) {
