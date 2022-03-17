@@ -1,56 +1,51 @@
 /*
 思路 1 ： 遇到了 O 看广度优先搜索看是否被包围
 57 / 58 个通过测试用例, 最后一个大的 case 超时了
-todo: 想办法降低时间复杂度
+思路 2: 使用 广度优先先标记没有被包围的 'O',然后修改
 */
-class Solution {
+#include <vector>
+#include <queue>
+
+using namespace std;
+class Solution2 {
 public:
     void solve(vector<vector<char>>& board) {
-        vector<vector<bool>> checked(board.size(), vector<bool>(board[0].size(), false));
-        for(int i = 0; i < board.size(); ++i){
-            for(int j = 0; j < board[0].size(); ++j){
-                if(board[i][j] == 'X') checked[i][j] = true;
-                else if(!checked[i][j] && board[i][j] == 'O'){
-                    if(surround(board, checked, i, j)) board[i][j] = 'Y';
-                    else board[i][j] = 'N';
-                    checked[i][j] = true;
-                }
-            }
+        m = static_cast<int>(board.size());
+        n = static_cast<int>(board[0].size());
+        for(int i = 0; i < m; ++i){
+            if(board[i][0] == 'O') bfs(board, i, 0);
+            if(board[i][n-1] == 'O') bfs(board, i, n-1);
         }
-        for(int i = 0; i < board.size(); ++i){
-            for(int j = 0; j < board[0].size(); ++j){
-                if(board[i][j] == 'Y') board[i][j] = 'X';
-                else if(board[i][j] == 'N') board[i][j] = 'O';
+        for(int j = 0; j < n ; ++j){
+            if(board[0][j] == 'O') bfs(board,0,j);
+            if(board[m-1][j] == 'O') bfs(board, m-1,j);
+        }
+        for(int i = 0; i < m; ++i){
+            for(int j = 0; j < n; ++j){
+                if(board[i][j] == 'O') board[i][j] = 'X';
+                else if(board[i][j] == 'A') board[i][j] = 'O';
             }
         }
     }
 private:
-    bool surround(vector<vector<char>>& board, vector<vector<bool>> checked, int i, int j){
-        queue<vector<int>> to_check;
-        to_check.push(vector<int>{i,j});
-        checked[i][j] = true;
-        vector<vector<int>> diff{{1,0},{-1,0},{0,1},{0,-1}};
-        while(!to_check.empty()){
-            int current_i = to_check.front()[0];
-            int current_j = to_check.front()[1];
-            if(current_i == 0 || current_j == 0 || current_i == board.size()-1 || current_j == board[0].size() - 1) return false;
-            else if(board[current_i][current_j] == 'Y') return true;
-            else if(board[current_i][current_j] == 'N') return false;
-            for(const auto& elem : diff){
-                int next_i = current_i + elem[0];
-                int next_j = current_j + elem[1];
-                if(board[next_i][next_j] == 'O' && !checked[next_i][next_j]){
-                    to_check.push(vector<int>{next_i,next_j});
-                    checked[next_i][next_j] = true;
-                }else if(board[next_i][next_j] == 'Y' || board[next_i][next_j] == 'N'){
-                    to_check.push(vector<int>{next_i,next_j});
+    int m;
+    int n;
+    void bfs(vector<vector<char>>& board, int x, int y){
+        queue<vector<int>> to_handle{};
+        vector<vector<int>> diffrence{{-1,0},{1,0},{0,1},{0,-1}};
+        to_handle.push(vector<int>{x,y});
+        board[x][y] = 'A';
+        while(!to_handle.empty()){
+            auto current = to_handle.front();
+            to_handle.pop();
+            for(const auto& elem : diffrence){
+                int new_x = current[0]+elem[0];
+                int new_y = current[1]+elem[1];
+                if(new_x >=0 && new_x < m && new_y >= 0  && new_y < n && board[new_x][new_y] == 'O'){
+                    to_handle.push(vector<int>{new_x,new_y});
+                    board[new_x][new_y] = 'A';
                 }
             }
-            to_check.pop();
         }
-        return true;
     }
 };
-/*
-思路2 ： 遇到了边上的 0 后广度优先， 将附近的点全部标记为 N
-*/
