@@ -3,6 +3,9 @@
 内存消耗：7.3 MB, 在所有 C++ 提交中击败了16.21% 的用户
 * C++ 可以直接使用 std::to_string
 */
+#include <string>
+
+using namespace std;
 class Solution {
 public:
     string compressString(string S) {
