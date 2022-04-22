@@ -1,6 +1,6 @@
 /*
  * 使用多源广度优先搜索， 效率有点低。
- * todo: 使用动态规划实现。
+ * Solution2 使用动态规划（前缀和）实现， 效率更高
  */
 #include <vector>
 #include <unordered_set>
@@ -51,6 +51,37 @@ public:
             }
             swap(curr_right, next_right);
             next_right.clear();
+        }
+        return dominoes;
+    }
+};
+// 解法2： 使用前缀和， 记录它距离左右牌的最近距离。
+class Solution2 {
+public:
+    string pushDominoes(string dominoes) {
+        int sz = dominoes.size();
+        vector<int> leftDist(sz, sz);
+        vector<int> rightDist(sz, sz);
+        for(int i = 0; i < sz; ++i){
+            if(dominoes[i] == 'R'){
+                rightDist[i] = 0;
+            }else if(i > 0 && rightDist[i-1]!=sz && dominoes[i] != 'L'){
+                rightDist[i] = rightDist[i-1] + 1;
+            }
+            if(dominoes[sz-1-i] == 'L'){
+                leftDist[sz-1-i] = 0;
+            }else if(i > 0 && leftDist[sz - i]!= sz && dominoes[sz-1-i]!='R'){
+                leftDist[sz-1-i] = leftDist[sz-i] + 1;
+            }
+        }
+        for(int i = 0; i < sz; ++i){
+            if(dominoes[i] == '.'){
+                if(leftDist[i] < rightDist[i]){
+                    dominoes[i] = 'L';
+                }else if(leftDist[i] > rightDist[i]){
+                    dominoes[i] = 'R';
+                }
+            }
         }
         return dominoes;
     }
