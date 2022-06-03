@@ -1,4 +1,5 @@
 // 二分查找， 记得区域的划分， 在相等的时候返回 true, 在大于和小于 target 的时候都可以划出两个不想交的区域分别查找
+// 还有就是要记得考虑数组为空的情况
 #include <vector>
 using std::vector;
 class Solution {

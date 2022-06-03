@@ -1,16 +1,21 @@
+#include <stack>
+#include <vector>
+
+using namespace std;
 class Solution {
 public:
-    vector<int> dailyTemperatures(vector<int>& temperatures) {
-        vector<int> result(temperatures.size(), 0);
-        stack<int> max_index{};
-        for(int i = 0; i < temperatures.size(); ++i){
-            while(!max_index.empty() && temperatures[i] > temperatures[max_index.top()]){
-                int prev = max_index.top();
-                result[prev] = i - prev;
-                max_index.pop();
+    vector<int> dailyTemperatures(vector<int>& temperatures)
+    {
+        stack<int> monoStack {};
+        int n = temperatures.size();
+        vector<int> res(n, 0);
+        for (int i = 0; i < temperatures.size(); ++i) {
+            while (!monoStack.empty() && temperatures[monoStack.top()] < temperatures[i]) {
+                res[monoStack.top()] = i - monoStack.top();
+                monoStack.pop();
             }
-            max_index.push(i);
+            monoStack.push(i);
         }
-        return result;
+        return res;
     }
 };
