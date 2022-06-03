@@ -1,30 +1,25 @@
+#include <map>
+#include <string>
+#include <vector>
+
+using namespace std;
 class Solution {
 public:
-    vector<vector<string>> groupAnagrams(vector<string>& strs) {
-        unordered_map<string, vector<int>> scounts{};
-        for(const auto& str:strs){
-            vector<int> buffer(26,0);
-            for(const auto&c :str){
-                buffer[c-'a']++;
+    vector<vector<string>> groupAnagrams(vector<string>& strs)
+    {
+        vector<vector<string>> res;
+        map<vector<int>, int> mp {};
+        for (const auto& s : strs) {
+            vector<int> curr(26, 0);
+            for (const auto& c : s) {
+                curr[c - 'a']++;
             }
-            scounts.insert(make_pair(str, buffer));
+            if (mp.find(curr) == mp.end()) {
+                res.push_back(vector<string> {});
+                mp[curr] = res.size() - 1;
+            }
+            res[mp[curr]].push_back(s);
         }
-        sort(strs.begin(),strs.end(),[&scounts](string s1, string s2){
-            return scounts[s1] < scounts[s2];
-        });
-        vector<vector<string>> result{};
-        vector<string> current{};
-        for(int i = 0; i < strs.size(); ){
-            if(current.size() == 0 || scounts[strs[i]] == scounts[current.back()]){
-                current.push_back(strs[i]);
-                ++i;
-            }
-            else{
-                result.push_back(current);
-                current = vector<string>();
-            }
-        }
-        if(!current.empty()) result.push_back(current);
-        return result;
+        return res;
     }
 };
