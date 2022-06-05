@@ -4,6 +4,9 @@
 2. dp[i+1] 的求解， 如果能够找到一个数字j, 使得从[i-j]到[i] 这 j+1 个字符中， 且 dp[i-j] （实际对应 f(i-j-1)) 为 true, 那么dp[i+1] 就可以为 true
 3. 我们要的结果就是 dp.back()
 */
+#include <string>
+#include <unordered_set>
+using namespace std;
 class Solution {
 public:
     bool wordBreak(string s, vector<string>& wordDict) {
@@ -18,5 +21,24 @@ public:
             }
         }
         return dp.back();
+    }
+};
+
+class BadSolution {
+public:
+    bool wordBreak(string s, vector<string>& wordDict) {
+        unordered_set<string> dict(wordDict.begin(), wordDict.end());
+        return dfs(s, dict);
+    }
+private:
+    bool dfs(const string&s, unordered_set<string>& dict){
+        if(s.size() == 0) return true;
+        for(int i = 1; i <=20 && i <= s.size(); ++i){
+            if(dict.find(s.substr(0,i))!=dict.end()){
+                if(dfs(s.substr(i,s.size()-i),dict))
+                    return true;
+            }
+        }
+        return false;
     }
 };
