@@ -15,26 +15,21 @@ public:
 
 private:
     string current {};
-    vector<string> res {};
-    void dfs(int l, int r)
+    vector<string> res;
+    void dfs(int left, int right)
     {
-        if (l == 0 && r == 0) {
+        if (left == 0 && right == 0) {
             res.push_back(current);
             return;
         }
-        if (l > r) {
-            return;
-        }
-        // 压入 左括号
-        if (l > 0) {
+        if (left > 0) {
             current.push_back('(');
-            dfs(l - 1, r);
+            dfs(left - 1, right);
             current.pop_back();
         }
-        // 压入 右括号
-        if (r > 0) {
+        if (right > 0 && right > left) {
             current.push_back(')');
-            dfs(l, r - 1);
+            dfs(left, right - 1);
             current.pop_back();
         }
     }
