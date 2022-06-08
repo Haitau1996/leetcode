@@ -1,31 +1,31 @@
 // 暴力枚举： 时间复杂度为 O(k^n) 超出时间限制
 // 更好的解法： 状态压缩 dp
+#include <numeric>
+#include <vector>
+
+using namespace std;
 class BruteForceSolution {
 public:
     bool canPartitionKSubsets(vector<int>& nums, int k)
     {
         auto sum = accumulate(nums.begin(), nums.end(), 0);
-        if (sum % k != 0)
+        if (sum % k)
             return false;
-        AVG = sum / k;
-        buffer = vector<int>(k, 0);
-        return dfs(nums, 0, 0);
+        buffer = vector<int>(k, sum / k);
+        return dfs(nums, 0);
     }
 
 private:
-    int AVG {};
     vector<int> buffer;
-    bool dfs(vector<int>& nums, int cursor, int k)
+    bool dfs(vector<int>& nums, int curr)
     {
-        if (buffer[k] > AVG)
-            return false;
-        if (cursor == nums.size())
+        if (curr == nums.size())
             return true;
-        for (int i = 0; i < buffer.size(); ++i) {
-            buffer[i] += nums[cursor];
-            if (dfs(nums, cursor + 1, i))
+        for (auto& elem : buffer) {
+            elem -= nums[curr];
+            if (elem >= 0 && dfs(nums, curr + 1))
                 return true;
-            buffer[i] -= nums[cursor];
+            elem += nums[curr];
         }
         return false;
     }
