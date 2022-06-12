@@ -12,11 +12,9 @@ public:
         int low = 1;
         int high = *max_element(piles.begin(), piles.end());
         while (low < high) {
-            int mid = (low + high) / 2;
-            if (can_finish(piles, mid, h) && !can_finish(piles, mid - 1, h))
-                return mid;
-            else if (can_finish(piles, mid, h))
-                high = mid - 1;
+            int mid = (low + high) >> 1;
+            if (can_finish(piles, mid, h))
+                high = mid;
             else
                 low = mid + 1;
         }
@@ -24,14 +22,12 @@ public:
     }
 
 private:
-    bool can_finish(vector<int>& piles, int val, int h)
+    bool can_finish(vector<int>& piles, int curr, int h)
     {
-        int res { 0 };
-        for (const auto& elem : piles) {
-            res += elem / val;
-            if (elem % val)
-                ++res;
+        int count { 0 };
+        for (const auto& pile : piles) {
+            count += (pile + curr - 1) / curr;
         }
-        return res <= h;
+        return count <= h;
     }
 };
