@@ -1,3 +1,4 @@
+// 需要注意 s 是 string, 而不是 vector<string>, 故要使用 getline 分割
 #include <sstream>
 #include <string>
 #include <unordered_map>
@@ -5,26 +6,22 @@
 using namespace std;
 class Solution {
 public:
-    bool wordPattern(string pattern, string s)
-    {
+    bool wordPattern(string pattern, string s) {
+        auto s_len = count(s.begin(), s.end(), ' ');
+        if(s_len+1!= pattern.size()) return false;
+        unordered_map<char, string> for_map{};
+        unordered_map<string, char> rev_map{};
+        string temp{};
         istringstream ss(s);
-        unordered_map<string, char> hash {};
-        unordered_map<char, string> revhash {};
-        string temp {};
-        size_t index = 0;
-        while (getline(ss, temp, ' ')) {
-            if (hash.find(temp) == hash.end() && index < pattern.size() && revhash.find(pattern[index]) == revhash.end()) {
-                hash.emplace(temp, pattern[index]);
-                revhash.emplace(pattern[index], temp);
-            } else if (hash.find(temp) != hash.end() && index < pattern.size() && revhash.find(pattern[index]) != revhash.end()) {
-                if (hash[temp] != pattern[index] || revhash[pattern[index]] != temp)
-                    return false;
-            } else
+        for(int i = 0; i < pattern.size(); ++i){
+            getline(ss, temp,' ');
+            if(for_map.find(pattern[i]) == for_map.end() && rev_map.find(temp) == rev_map.end()){
+                for_map[pattern[i]] = temp;
+                rev_map[temp] = pattern[i];
+            }else if(for_map[pattern[i]]!=temp || rev_map[temp]!= pattern[i]){
                 return false;
-            ++index;
+            }
         }
-        if (index == pattern.size())
-            return true;
-        return false;
+        return true;
     }
 };
