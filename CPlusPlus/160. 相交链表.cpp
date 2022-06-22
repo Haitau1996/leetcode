@@ -1,41 +1,45 @@
 /*
-执行用时：44 ms, 在所有 C++ 提交中击败了88.80%的用户
-内存消耗：14.3 MB, 在所有 C++ 提交中击败了51.76%的用户
-*/
+ * 先抹平长度差， 然后挨个查找
+ */
+#include "include/linked_list.hpp"
+
 class Solution {
 public:
-    ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
-        if(headA == NULL || headB == NULL) return NULL;
-        int lenA{1};
-        int lenB{1};
-        ListNode* cursorA = headA;
-        ListNode* cursorB = headB;
-        while(cursorA->next != NULL){
-            cursorA = cursorA->next;
-            ++lenA;
-        }
-        while(cursorB->next != NULL){
-            cursorB = cursorB->next;
-            ++lenB;
-        }
-        if(cursorA != cursorB)
-            return NULL;
-        int diff = lenA - lenB;
-        if(diff > 0)
-            headA = advance(headA, diff);
-        else    headB = advance(headB, -diff);
-        while(headA != headB){
-            headA= headA->next;
-            headB= headB->next;
-        }
-        return headA;
-    }
+	ListNode* getIntersectionNode(ListNode* headA, ListNode* headB)
+	{
+		int lenA = get_len(headA);
+		int lenB = get_len(headB);
+		if (lenA > lenB) {
+			headA = advance(headA, lenA - lenB);
+		} else {
+			headB = advance(headB, lenB - lenA);
+		}
+		while (headA != nullptr) {
+			if (headB == headA) {
+				break;
+			} else {
+				headA = headA->next;
+				headB = headB->next;
+			}
+		}
+		return headA;
+	}
+
 private:
-    ListNode* advance(ListNode* head, int n){
-        while(n>0){
-            head = head->next;
-            --n;
-        }
-        return head;
-    }
+	ListNode* advance(ListNode* curr, int n)
+	{
+		for (int i = 0; i < n; ++i) {
+			curr = curr->next;
+		}
+		return curr;
+	}
+	int get_len(ListNode* curr)
+	{
+		int i = 0;
+		while (curr != nullptr) {
+			++i;
+			curr = curr->next;
+		}
+		return i;
+	}
 };
