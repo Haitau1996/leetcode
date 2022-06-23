@@ -1,53 +1,35 @@
-/*
-执行用时：16 ms, 在所有 C++ 提交中击败了38.43% 的用户
-内存消耗：34.3 MB, 在所有 C++ 提交中击败了16.88% 的用户
-*/
+/* 
+ * 回溯， 记录当下路径， 符合条件则添加， 记得处理完毕后将节点的值从 curr 删除
+ */
+#include "include/tree.hpp"
+#include <vector>
+
+using namespace std;
 class Solution {
 public:
     vector<vector<int>> pathSum(TreeNode* root, int targetSum) {
-        if(root==nullptr)
-            return vector<vector<int>>();
-        vector<vector<int>> res = sumHelper(root,targetSum);
-        for(auto& item: res)
-            std::reverse(item.begin(),item.end());
+        dfs(root, targetSum);
         return res;
     }
 private:
-    vector<vector<int>> sumHelper(TreeNode* root, int targetSum){
-        // base case:
-        if(isLeaf(root) && root->val == targetSum)
-            return vector<vector<int>>{{root->val}};
-        else if(isLeaf(root)&&root->val!=targetSum)
-            return vector<vector<int>>{};
-        else{
-            vector<vector<int>> res;
-            if(root->left != nullptr){
-                auto leftRes = sumHelper(root->left,targetSum-root->val);
-                if(leftRes.size()!=0 && leftRes[0].size()!=0){
-                    for(auto& item : leftRes){
-                        item.push_back(root->val);
-                    }
-                    for(auto item :leftRes){
-                        res.push_back(item);
-                    }
-                }
-            }
-            if(root->right != nullptr){
-                auto rightRes = sumHelper(root->right, targetSum-root->val);
-                if(rightRes.size()!=0&& rightRes[0].size() != 0){
-                    for(auto& item: rightRes){
-                        item.push_back(root->val);
-                    }
-                    for(auto item:rightRes)
-                        res.push_back(item);
-                }
-            }
-            return res;
-        }
-    }
-    bool isLeaf(TreeNode* root){
-        return  root        != nullptr &&
-                root->left  == nullptr &&
+    bool is_leaf(TreeNode* root){
+        return root != nullptr &&
+                root->left == nullptr &&
                 root->right == nullptr;
+    }
+    vector<vector<int>> res{};
+    vector<int> curr{};
+    void dfs(TreeNode* root, int sum){
+        if(root == nullptr) return;
+        if(is_leaf(root) && root->val == sum){
+            curr.push_back(root->val);
+            res.push_back(curr);
+            curr.pop_back();
+            return;
+        }
+        curr.push_back(root->val);
+        dfs(root->left, sum-root->val);
+        dfs(root->right, sum - root->val);
+        curr.pop_back();
     }
 };

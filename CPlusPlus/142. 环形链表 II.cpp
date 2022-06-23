@@ -1,39 +1,30 @@
+// 快慢指针， 赶上了就说明有环
+#include "include/linked_list.hpp"
+
 class Solution {
 public:
     ListNode *detectCycle(ListNode *head) {
-        // base case: 
-        if(head == NULL || head->next == NULL)
-            return NULL;
-        ListNode* fastCur = head;
-        ListNode* slowCur = head;
-        while(fastCur != NULL){
-            fastCur = fastCur->next;
-            if(fastCur == slowCur)
-                break;
-            else if(fastCur == NULL)
-                return NULL;
-            else{
-                fastCur= fastCur->next;
-                slowCur= slowCur->next;
-            }
+        if(head == nullptr) return nullptr;
+        ListNode* fast = head->next;
+        ListNode* slow = head;
+        while(fast != nullptr && fast->next != nullptr ){
+            fast = fast->next->next;
+            slow = slow->next;
+            if(slow == fast) break;
         }
-        if(fastCur != slowCur)
-            return NULL;
-        else{
-            size_t loopSz = 1;
-            fastCur = fastCur->next;
-            while(fastCur!= slowCur){
-                loopSz++;
-                fastCur=fastCur->next;
-            }
-            fastCur = head;
-            for(int i =0; i< loopSz; ++i)
-                fastCur = fastCur->next;
-            while(fastCur!=head){
-                fastCur = fastCur->next;
-                head = head->next;
-            }
-            return fastCur;
+        if(slow != fast) return nullptr;
+        fast = fast -> next;
+        int len = 1;
+        while(fast != slow){
+            ++len;
+            fast = fast->next;
         }
+        fast = head; slow = head;
+        for(int i = 0; i < len; ++i) fast = fast->next;
+        while(fast!=slow){
+            fast = fast->next;
+            slow = slow -> next;
+        }
+        return fast;
     }
 };
