@@ -1,4 +1,5 @@
 // 使用partition 不剪枝的话会超时
+// ！！！ 原来不是 partition 的问题， 是因为传递参数时候没有使用 by -reference 导致vector 复制
 class Solution {
 public:
     vector<vector<int>> kClosest(vector<vector<int>>& points, int k) {
@@ -17,7 +18,7 @@ public:
         return vector<vector<int>>(points.begin(), points.begin()+k);
     }
 private:
-    int get_distance_square(vector<int> point){
+    int get_distance_square(vector<int>& point){
         return point[0] * point[0] + point[1] * point[1];
     }
     int partition(vector<vector<int>>& points, int beg, int end){
