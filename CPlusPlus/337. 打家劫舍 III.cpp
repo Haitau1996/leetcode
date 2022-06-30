@@ -1,27 +1,29 @@
+/*
+ * 使用一个 pair<int, int> 存放状态， first 为不包含当下节点的最大值， second 为不管是否包含当下节点的最大值
+ */
+#include "include/tree.hpp"
+#include <utility>
+using namespace std;
 class Solution {
+	using mp = pair<int, int>;
+
 public:
-    int rob(TreeNode* root) {
-        if(root == nullptr) return 0;
-        dfs(root);
-        return root->val;
-    }
+	int rob(TreeNode* root)
+	{
+		auto res = dfs(root);
+		return res.second;
+	}
+
 private:
-    void dfs(TreeNode* root){
-        if(root == nullptr || is_leaf(root)) return;
-        dfs(root->left);
-        dfs(root->right);
-        // modefy current node val
-        int ignore_current = get_child_val(root);
-        int select_current = get_child_val(root->left) + get_child_val(root->right) + root->val;
-        root->val = max(ignore_current,select_current);
-    }
-    bool is_leaf(TreeNode* root){
-        return root!=nullptr && root->left == nullptr && root->right == nullptr;
-    }
-    int get_child_val(TreeNode* root){
-        if(root == nullptr) return 0;
-        int left = (root->left)? root->left->val : 0;
-        int right = (root->right)? root->right->val : 0;
-        return left + right;
-    }
+	mp dfs(TreeNode* root)
+	{
+		if (root == nullptr) {
+			return mp(0, 0);
+		}
+		auto l = dfs(root->left);
+		auto r = dfs(root->right);
+		int fir = l.second + r.second;
+		int sec = max(fir, l.first + r.first + root->val);
+		return mp(fir, sec);
+	}
 };
