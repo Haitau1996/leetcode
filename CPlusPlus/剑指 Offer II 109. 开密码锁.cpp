@@ -1,44 +1,45 @@
+// 使用queue 的 size 函数可以不用维护两个队列
+#include <queue>
+#include <string>
+#include <unordered_set>
+
+using namespace std;
 class Solution {
 public:
-    int openLock(vector<string>& deadends, string target) {
-        unordered_set<string> dead(deadends.begin(), deadends.end());
-        unordered_set<string> visited{};
-        string source("0000");
-        if(dead.find(source)!=dead.end() || dead.find(target)!= dead.end()) return -1;
-        queue<string> curr_que{};
-        queue<string> next_que{};
-        int distance = 0;
-        curr_que.push(source);
-        visited.insert(source);
-        while(!curr_que.empty()){
-            string current = curr_que.front();
-            if(current == target) return distance;
-            vector<string> neighbors = getNeighbors(current);
-            for(const auto& neighbor : neighbors){
-                if(dead.find(neighbor) == dead.end() && visited.find(neighbor) == visited.end()){
-                    next_que.push(neighbor);
-                    visited.insert(neighbor);
-                }
-            }
-            curr_que.pop();
-            if(curr_que.empty()){
-                ++distance;
-                swap(curr_que,next_que);
-            }
-        }
-        return -1;
-    }
-private:
-    vector<string> getNeighbors(string current){
-        vector<string> result{};
-        for(int i = 0; i < current.size(); ++i){
-            string up(current);
-            up[i] = up[i] == '9' ? '0' : up[i] + 1;
-            result.push_back(up);
-            string down(current);
-            down[i] = down[i] == '0' ? '9' : down[i] - 1;
-            result.push_back(down);
-        }
-        return result;
-    }
+	int openLock(vector<string>& deadends, string target)
+	{
+		unordered_set<string> de(deadends.begin(), deadends.end());
+		unordered_set<string> checked {};
+		int curr = 0;
+		queue<string> tocheck;
+		string src("0000");
+		if (de.find(src) == de.end()) {
+			tocheck.emplace(src);
+			checked.emplace(src);
+		}
+		while (!tocheck.empty()) {
+			int cnt = tocheck.size();
+			for (int i = 0; i < cnt; ++i) {
+				if (tocheck.front() == target)
+					return curr;
+				for (int j = 0; j < 4; ++j) {
+					string up(tocheck.front());
+					string down(tocheck.front());
+					up[j] = (up[j] - '0' + 1) % 10 + '0';
+					down[j] = (down[j] - '0' + 9) % 10 + '0';
+					if (de.find(up) == de.end() && checked.find(up) == checked.end()) {
+						tocheck.push(up);
+						checked.insert(up);
+					}
+					if (de.find(down) == de.end() && checked.find(down) == checked.end()) {
+						tocheck.push(down);
+						checked.insert(down);
+					}
+				}
+				tocheck.pop();
+			}
+			++curr;
+		}
+		return -1;
+	}
 };
