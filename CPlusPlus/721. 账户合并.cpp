@@ -60,12 +60,12 @@ private:
         }
         return i;
     }
-    bool unite(int p, int q)
+    void unite(int p, int q)
     {
         int pr = find(p);
         int qr = find(q);
         if (pr == qr)
-            return false;
+            return ;
         else {
             if (hit[pr] == hit[qr]) {
                 idx[pr] = qr;
@@ -75,7 +75,6 @@ private:
             } else {
                 idx[pr] = qr;
             }
-            return true;
         }
     }
 };
