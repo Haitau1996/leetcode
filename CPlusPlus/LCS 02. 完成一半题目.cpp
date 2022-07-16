@@ -1,6 +1,5 @@
 // 哈希 + 排序 + 贪心
 #include <algorithm>
-#include <functional>
 #include <vector>
 
 using namespace std;
