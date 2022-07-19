@@ -5,48 +5,49 @@
 3. 待处理的队列空了之后， 将它和 swap 交换， 重复步骤 2
 */
 class Solution {
+	using mp = pair<int, int>;
+
 public:
-    vector<vector<int>> updateMatrix(vector<vector<int>>& mat) {
-        vector<vector<bool>> checked(mat.size(),vector<bool>(mat[0].size(), false));
-        vector<vector<int>> result(mat.size(),vector<int>(mat[0].size(), numeric_limits<int>::max()));
-        int flag{1};
-        queue<vector<int>> current{};
-        queue<vector<int>> next{};
-        vector<vector<int>> neighbors{{1,0},{-1,0},{0,1},{0,-1}};
-        for(int i = 0; i < mat.size(); ++i){
-            for(int j = 0;  j< mat[0].size(); ++j){
-                if(!checked[i][j] && mat[i][j] == 0){
-                    result[i][j] = 0;
-                    checked[i][j] = true;
-                    for(const auto& elem : neighbors){
-                        int new_i = i + elem[0];
-                        int new_j = j + elem[1];
-                        if(new_i>= 0 && new_i < mat.size() && new_j >= 0 && new_j < mat[0].size() && !checked[new_i][new_j] && mat[new_i][new_j]){
-                            current.push(vector<int>{new_i,new_j});
-                            checked[new_i][new_j] = true;
-                        }
-                    }
-                }
-            }
-        }
-        while(!current.empty()){
-            while(!current.empty()){
-                int i = current.front()[0];
-                int j = current.front()[1];
-                result[i][j] = flag;
-                for(const auto& elem : neighbors){
-                    int new_i = i + elem[0];
-                    int new_j = j + elem[1];
-                    if(new_i>= 0 && new_i < mat.size() && new_j >= 0 && new_j < mat[0].size() && !checked[new_i][new_j] && mat[new_i][new_j]){
-                        next.push(vector<int>{new_i,new_j});
-                        checked[new_i][new_j] = true;
-                    }
-                }
-                current.pop();
-            }
-            swap(current,next);
-            flag = flag + 1;
-        }
-        return result;
-    }
+	vector<vector<int>> updateMatrix(vector<vector<int>>& mat)
+	{
+		size_t m = mat.size();
+		size_t n = mat[0].size();
+		vector<vector<bool>> checked(m, vector<bool>(n, false));
+		vector<vector<int>> neighbors { { 1, 0 }, { -1, 0 }, { 0, 1 }, { 0, -1 } };
+		queue<mp> curr;
+		int dist = 1;
+		for (int i = 0; i < m; ++i) {
+			for (int j = 0; j < n; ++j) {
+				if (mat[i][j] == 0) {
+					checked[i][j] = true;
+					for (const auto next : neighbors) {
+						int x = i + next[0];
+						int y = j + next[1];
+						if (x >= 0 && y >= 0 && x < m && y < n && !checked[x][y] && mat[x][y] == 1) {
+							curr.emplace(x, y);
+							checked[x][y] = true;
+						}
+					}
+				}
+			}
+		}
+		while (!curr.empty()) {
+			int bound = curr.size();
+			for (int i = 0; i < bound; ++i) {
+				auto front = curr.front();
+				mat[front.first][front.second] = dist;
+				for (const auto& next : neighbors) {
+					int x = front.first + next[0];
+					int y = front.second + next[1];
+					if (x >= 0 && y >= 0 && x < m && y < n && !checked[x][y] && mat[x][y] == 1) {
+						curr.emplace(x, y);
+						checked[x][y] = true;
+					}
+				}
+				curr.pop();
+			}
+			++dist;
+		}
+		return mat;
+	}
 };
