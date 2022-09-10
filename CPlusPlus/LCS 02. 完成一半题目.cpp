@@ -14,7 +14,7 @@ public:
         sort(count.begin(), count.end(), std::greater<int>());
         int curr_count { 0 };
         int upper_bound = questions.size() / 2;
-        for (int i = 0; i < count.size(); ++i) {
+        for (int i = 0; i < static_cast<int>(count.size()); ++i) {
             curr_count += count[i];
             if (curr_count >= upper_bound)
                 return i + 1;
